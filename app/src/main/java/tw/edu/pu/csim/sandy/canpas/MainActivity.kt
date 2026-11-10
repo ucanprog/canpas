@@ -57,13 +57,22 @@ fun CanvaScreen(modifier: Modifier = Modifier) {
     var gameOver by remember { mutableStateOf(false) }
     val minionsImage: ImageBitmap =
         ImageBitmap.imageResource(id = R.drawable.minions)
-    LaunchedEffect(gameOver) {
-        while (!gameOver){
-            delay(100L)
-            minionsX += 5
-            minionsY += 10
+    LaunchedEffect(key1 = gameOver) {
+        while (!gameOver) {
+            delay(timeMillis = 100L)
+
+            minionsX += 5f
+            minionsY += 10f
+
+            // 假設畫布寬度大約是 1080，高度約是 1776（可依你實際抓到的 Canvas 尺寸調整）
+            // 當小小兵跑出右下角邊界時（例如 minionsX 超過 1000 或 minionsY 超過 1700），重置回 (0, 0)
+            if (minionsX > 1080f || minionsY > 1776f) {
+                minionsX = 0f
+                minionsY = 0f
+            }
         }
     }
+
     Box(modifier = modifier.fillMaxSize()) {
 
         Canvas(
