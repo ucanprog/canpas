@@ -20,7 +20,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.tooling.preview.Preview
 import tw.edu.pu.csim.sandy.canpas.ui.theme.CanpasTheme
 
@@ -46,10 +49,22 @@ fun CanvaScreen(modifier: Modifier = Modifier) {
     var CanvasWidth by remember { mutableStateOf(0f) }
     var CanvaHeight by remember { mutableStateOf(0f) }
     Box(modifier = modifier.fillMaxSize()) {
-        Canvas(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        val minionsImage: ImageBitmap =
+            ImageBitmap.imageResource(id = R.drawable.minions)
 
+        Canvas(
+            modifier = modifier.fillMaxSize()
+        ) {
+            val minionsWidth = minionsImage.width
+            val minionsHeight = minionsImage.height
+            // 置中公式：(畫布寬高 - 圖片寬高) / 2f
+            val offsetX = (size.width - minionsWidth) / 2f
+            val offsetY = (size.height - minionsHeight) / 2f
+
+            // 將畫布起點移至置中位置後畫圖
+            translate(0f, 0f) {
+                drawImage(minionsImage)
+            }
 
             //繪製洋紅色的圓, 半徑 100, 圓心 (100,100)
             drawCircle(
