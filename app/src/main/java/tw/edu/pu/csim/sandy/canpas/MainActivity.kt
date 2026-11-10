@@ -8,11 +8,14 @@ import androidx.activity.enableEdgeToEdge
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +28,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.delay
 import tw.edu.pu.csim.sandy.canpas.ui.theme.CanpasTheme
 
 class MainActivity : ComponentActivity() {
@@ -48,9 +52,19 @@ class MainActivity : ComponentActivity() {
 fun CanvaScreen(modifier: Modifier = Modifier) {
     var CanvasWidth by remember { mutableStateOf(0f) }
     var CanvaHeight by remember { mutableStateOf(0f) }
+    var minionsX by remember { mutableStateOf(0f) }
+    var minionsY by remember { mutableStateOf(0f) }
+    var gameOver by remember { mutableStateOf(false) }
+    val minionsImage: ImageBitmap =
+        ImageBitmap.imageResource(id = R.drawable.minions)
+    LaunchedEffect(gameOver) {
+        while (!gameOver){
+            delay(100L)
+            minionsX += 5
+            minionsY += 10
+        }
+    }
     Box(modifier = modifier.fillMaxSize()) {
-        val minionsImage: ImageBitmap =
-            ImageBitmap.imageResource(id = R.drawable.minions)
 
         Canvas(
             modifier = modifier.fillMaxSize()
@@ -62,7 +76,7 @@ fun CanvaScreen(modifier: Modifier = Modifier) {
             val offsetY = (size.height - minionsHeight) / 2f
 
             // 將畫布起點移至置中位置後畫圖
-            translate(0f, 0f) {
+            translate(minionsX, minionsY) {
                 drawImage(minionsImage)
             }
 
@@ -90,7 +104,18 @@ fun CanvaScreen(modifier: Modifier = Modifier) {
                 Offset(size.width, size.height),
                 strokeWidth = 10f
             )
+
         }
-        Text("畫布寬度 $CanvasWidth, 長度 $CanvaHeight")
+        Column{
+            Text("畫布寬度 $CanvasWidth, 長度 $CanvaHeight")
+            Button(
+                onClick = {gameOver = ! gameOver}
+            )
+            {
+                if (gameOver){Text("繼續遊戲")}
+                else{Text("停止遊戲")}
+            }
+        }
+
     }
 }
